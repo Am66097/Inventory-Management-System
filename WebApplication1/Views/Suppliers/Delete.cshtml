@@ -1,0 +1,30 @@
+﻿@model WebApplication1.Models.Supplier
+
+@{
+    ViewData["Title"] = "Delete Supplier";
+}
+
+<h2 class="text-danger">Delete Supplier</h2>
+<h4>Are you sure you want to delete this supplier?</h4>
+<hr />
+
+<div>
+    <dl class="row">
+        <dt class="col-sm-3">Supplier Name</dt>
+        <dd class="col-sm-9">@Model.SupplierName</dd>
+
+        <dt class="col-sm-3">Contact Name</dt>
+        <dd class="col-sm-9">@Model.ContactName</dd>
+
+        <dt class="col-sm-3">Phone</dt>
+        <dd class="col-sm-9">@Model.Phone</dd>
+    </dl>
+
+    <form asp-action="Delete">
+        <!-- الحقل المخفي لترحيل الـ ID -->
+        <input type="hidden" asp-for="SupplierId" />
+
+        <input type="submit" value="Confirm Delete" class="btn btn-danger" />
+        <a asp-action="Index" class="btn btn-secondary">Cancel</a>
+    </form>
+</div>
