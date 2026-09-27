@@ -1,0 +1,41 @@
+﻿@model WebApplication1.Models.Sale
+
+@{
+    ViewData["Title"] = "Edit Sale";
+}
+
+<h1 class="mb-4">Edit Sale</h1>
+
+<h4>Update Sale Information</h4>
+<hr />
+<div class="row">
+    <div class="col-md-6">
+        <form asp-action="Edit">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="SaleID" />
+
+            <div class="form-group mb-3">
+                <label asp-for="SaleID" class="control-label fw-bold">Sale ID</label>
+                <input asp-for="SaleID" class="form-control" />
+                <span asp-validation-for="SaleID" class="text-danger"></span>
+            </div>
+
+            <div class="form-group mb-4">
+                <label asp-for="TotalAmount" class="control-label fw-bold">Total Amount</label>
+                <input asp-for="TotalAmount" class="form-control" />
+                <span asp-validation-for="TotalAmount" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <button type="submit" class="btn btn-primary">Save Changes</button> |
+                <a asp-action="Index" class="btn btn-secondary">Back to List</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}
