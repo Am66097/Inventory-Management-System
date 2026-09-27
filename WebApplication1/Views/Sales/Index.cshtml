@@ -1,0 +1,45 @@
+﻿@model IEnumerable<WebApplication1.Models.Sale>
+
+@{
+    ViewData["Title"] = "Sales List";
+}
+
+<h1 class="mb-4">Sales List</h1>
+
+<p>
+    <a asp-action="Create" class="btn btn-primary">Create New Sale</a>
+</p>
+
+<table class="table table-striped table-bordered mt-3">
+    <thead class="table-dark">
+        <tr>
+            <th>ID</th>
+            <th>Date</th>
+            <th>Total Amount</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (Model != null && Model.Any())
+        {
+            foreach (var item in Model)
+            {
+                <tr>
+                    <td>@item.SaleID</td>
+                    <td>@item.SaleDate</td>
+                    <td>@item.TotalAmount</td>
+                    <td>
+                        <a asp-action="Details" asp-route-id="@item.SaleID" class="btn btn-sm btn-info">Details</a> |
+                        <a asp-action="Delete" asp-route-id="@item.SaleID" class="btn btn-sm btn-danger">Delete</a>
+                    </td>
+                </tr>
+            }
+        }
+        else
+        {
+            <tr>
+                <td colspan="4" class="text-center">No sales found.</td>
+            </tr>
+        }
+    </tbody>
+</table>
