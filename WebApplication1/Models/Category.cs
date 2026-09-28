@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace WebApplication1.Models
 {
@@ -6,16 +7,39 @@ namespace WebApplication1.Models
     {
         [Key]
         public int CategoryId { get; set; }
+
         [Required]
         [MaxLength(100)]
         public string CategoryName { get; set; } = string.Empty;
-        public string? Description { get; set; } 
 
+        // الوسم NotMapped يمنع Entity Framework من البحث عن عمود Name في SQL
+        [NotMapped]
+        public string Name
+        {
+            get => CategoryName;
+            set => CategoryName = value;
+        }
 
-        // Navigation Properties 
+        public string? Description { get; set; }
 
-        // public ICollection<Product> Products { get; set; } 
-
-
+        // Navigation Property
+        public virtual ICollection<Product> Products { get; set; } = new List<Product>();
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 }

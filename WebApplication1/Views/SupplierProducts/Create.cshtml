@@ -1,0 +1,49 @@
+﻿@model WebApplication1.Models.SupplierProduct
+
+@{
+    ViewData["Title"] = "Create Supplier Contract";
+}
+
+<h2>Create Supplier Contract</h2>
+<hr />
+
+<div class="row">
+    <div class="col-md-6">
+        <form asp-action="Create" method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+            <div class="mb-3">
+                <label asp-for="SupplierID" class="form-label">Supplier</label>
+                <select asp-for="SupplierID" class="form-select" asp-items="ViewBag.SupplierID">
+                    <option value="">-- Select Supplier --</option>
+                </select>
+                <span asp-validation-for="SupplierID" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="ProductID" class="form-label">Product</label>
+                <select asp-for="ProductID" class="form-select" asp-items="ViewBag.ProductID">
+                    <option value="">-- Select Product --</option>
+                </select>
+                <span asp-validation-for="ProductID" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="ContractPrice" class="form-label">Contract Price</label>
+                <input asp-for="ContractPrice" type="number" step="0.01" class="form-control" placeholder="0.00" />
+                <span asp-validation-for="ContractPrice" class="text-danger"></span>
+            </div>
+
+            <div class="mt-4">
+                <button type="submit" class="btn btn-success"><i class="bi bi-check-circle"></i> Save Contract</button>
+                <a asp-action="Index" class="btn btn-secondary">Back to List</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

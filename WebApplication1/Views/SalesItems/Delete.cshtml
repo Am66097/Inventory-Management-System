@@ -1,0 +1,34 @@
+﻿@model WebApplication1.Models.SaleItem
+
+@{
+    ViewData["Title"] = "Delete Sale Item";
+}
+
+<h2>Delete Sale Item</h2>
+<h4 class="text-danger">Are you sure you want to delete this sale item?</h4>
+<hr />
+
+<div>
+    <dl class="row">
+        <dt class="col-sm-3">Item ID</dt>
+        <dd class="col-sm-9">@Model.SaleItemID</dd>
+
+        <dt class="col-sm-3">Sale ID</dt>
+        <dd class="col-sm-9">@Model.SaleID</dd>
+
+        <dt class="col-sm-3">Product</dt>
+        <dd class="col-sm-9">@Model.Product?.Name</dd>
+
+        <dt class="col-sm-3">Quantity</dt>
+        <dd class="col-sm-9">@Model.Quantity</dd>
+
+        <dt class="col-sm-3">Unit Price</dt>
+        <dd class="col-sm-9">@Model.UnitPrice.ToString("C")</dd>
+    </dl>
+    
+    <form asp-action="Delete" method="post">
+        <input type="hidden" asp-for="SaleItemID" />
+        <button type="submit" class="btn btn-danger"><i class="bi bi-trash"></i> Delete</button>
+        <a asp-action="Index" class="btn btn-secondary">Back to List</a>
+    </form>
+</div>
