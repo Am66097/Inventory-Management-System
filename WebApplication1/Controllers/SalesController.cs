@@ -1,8 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using WebApplication1.Data;
+using WebApplication1.Data; // أو النيمسبيس الخاص بالـ DbContext لديك
 using WebApplication1.Models;
+
 
 namespace WebApplication1.Controllers
 {
@@ -15,7 +16,7 @@ namespace WebApplication1.Controllers
             _context = context;
         }
 
-        // GET: Sales
+        // عرض قائمة جميع المبيعات
         public async Task<IActionResult> Index()
         {
             var sales = await _context.Sales
@@ -26,25 +27,18 @@ namespace WebApplication1.Controllers
             return View(sales);
         }
 
-        // GET: Sales/Create
+        // عرض شاشة إنشاء فاتورة جديدة (GET)
         public IActionResult Create()
         {
             ViewBag.Products = new SelectList(_context.Products, "ProductID", "ProductName");
             return View();
         }
 
-        // POST: Sales/Create
+        // حفظ الفاتورة وتطبيق اللوجيك الأهم (POST)
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(Sale sale, List<SaleItem> items)
         {
-            // 1. التحقق من الـ ModelState (خطوة أساسية لا يمكن تجاهلها)
-            if (!ModelState.IsValid)
-            {
-                ViewBag.Products = new SelectList(_context.Products, "ProductID", "ProductName");
-                return View(sale);
-            }
-
             if (items == null || !items.Any())
             {
                 ModelState.AddModelError("", "Please add at least one item to the sale.");
@@ -52,9 +46,10 @@ namespace WebApplication1.Controllers
                 return View(sale);
             }
 
-            // 2. تهيئة الـ List لتجنب خطأ NullReferenceException عند عمل Add
-            sale.SalesItems = new List<SaleItem>();
             decimal total = 0;
+
+            // استخدام Transaction لضمان سلامة قاعدة البيانات
+            using var transaction = await _context.Database.BeginTransactionAsync();
 
             try
             {
@@ -77,32 +72,33 @@ namespace WebApplication1.Controllers
                         return View(sale);
                     }
 
-                    // الخصم التلقائي من الستوك
+                    // 1. اللوجيك الأهم: الخصم التلقائي من الستوك
                     product.StockQuantity -= item.Quantity;
                     _context.Products.Update(product);
 
-                    // حساب السعر وتجميع الإجمالي أوتوماتيك
+                    // 2. حساب السعر وتجميع الإجمالي أوتوماتيك
                     item.UnitPrice = product.UnitPrice;
                     total += (item.UnitPrice * item.Quantity);
 
-                    // إضافة العنصر للفاتورة بأمان
+                    // إضافة العنصر للفاتورة
                     sale.SalesItems.Add(item);
                 }
 
-                // تعيين إجمالي الفاتورة وتاريخ الشراء
+                // 3. تعيين إجمالي الفاتورة وتاريخ الشراء
                 sale.TotalAmount = total;
                 sale.SaleDate = DateTime.Now;
 
                 _context.Sales.Add(sale);
 
-                // 3. حفظ التغييرات 
-                // (دالة SaveChangesAsync في EF Core تقوم بعمل Transaction تلقائياً لجميع العمليات، فلا حاجة لكتابتها يدوياً)
+                // حفظ التغييرات ودمج العمليات
                 await _context.SaveChangesAsync();
+                await transaction.CommitAsync();
 
                 return RedirectToAction(nameof(Index));
             }
             catch (Exception ex)
             {
+                await transaction.RollbackAsync();
                 ModelState.AddModelError("", "An error occurred while saving the sale: " + ex.Message);
                 ViewBag.Products = new SelectList(_context.Products, "ProductID", "ProductName");
                 return View(sale);

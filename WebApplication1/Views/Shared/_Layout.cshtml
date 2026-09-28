@@ -19,27 +19,30 @@
                     <span class="navbar-toggler-icon"></span>
                 </button>
                 <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-
-                    @{
-                        // كود رازور لمعرفة اسم الكنترولر الحالي اللي اليوزر واقف عليه
-                        var currentController = ViewContext.RouteData.Values["Controller"]?.ToString();
-                    }
-
                     <ul class="navbar-nav flex-grow-1">
                         <li class="nav-item">
-                            <a class="nav-link @(currentController == "Home" ? "text-primary fw-bold" : "text-dark")" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link @(currentController == "Categories" ? "text-primary fw-bold" : "text-dark")" asp-area="" asp-controller="Categories" asp-action="Index">Categories</a>
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Categories" asp-action="Index">Categories</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link @(currentController == "Suppliers" ? "text-primary fw-bold" : "text-dark")" asp-area="" asp-controller="Suppliers" asp-action="Index">Suppliers</a>
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Products" asp-action="Index">Products</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link @(currentController == "Products" ? "text-primary fw-bold" : "text-dark")" asp-area="" asp-controller="Products" asp-action="Index">Products</a>
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Suppliers" asp-action="Index">Suppliers</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link @(currentController == "Sales" ? "text-primary fw-bold" : "text-dark")" asp-area="" asp-controller="Sales" asp-action="Index">Sales</a>
+                            <a class="nav-link text-dark" asp-area="" asp-controller="SupplierProducts" asp-action="Index">Supplier Contracts</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Sales" asp-action="Index">Sales</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="" asp-controller="SalesItems" asp-action="Index">Sale Items</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
                         </li>
                     </ul>
                 </div>

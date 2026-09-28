@@ -4,23 +4,25 @@
     ViewData["Title"] = "Sale Details";
 }
 
-<h1 class="mb-4">Sale Details</h1>
+<h2>Sale Details</h2>
+<hr />
 
-<div>
-    <h4>Sale Information</h4>
-    <hr />
-    <dl class="row">
-        <dt class="col-sm-2">ID</dt>
-        <dd class="col-sm-10">@Model.SaleID</dd>
+<div class="card shadow-sm col-md-8">
+    <div class="card-body">
+        <dl class="row mb-0">
+            <dt class="col-sm-4">Sale ID</dt>
+            <dd class="col-sm-8">@Model.SaleID</dd>
 
-        <dt class="col-sm-2">Date</dt>
-        <dd class="col-sm-10">@Model.SaleDate</dd>
+            <dt class="col-sm-4">Sale Date</dt>
+            <dd class="col-sm-8">@Model.SaleDate.ToString("yyyy-MM-dd HH:mm")</dd>
 
-        <dt class="col-sm-2">Total Amount</dt>
-        <dd class="col-sm-10">@Model.TotalAmount</dd>
-    </dl>
+            <dt class="col-sm-4">Total Amount</dt>
+            <dd class="col-sm-8">@Model.TotalAmount.ToString("C")</dd>
+        </dl>
+    </div>
 </div>
-<div class="mt-3">
-    <a asp-action="Edit" asp-route-id="@Model?.SaleID" class="btn btn-warning">Edit</a> |
-    <a asp-action="Index" class="btn btn-secondary">Back to List</a>
+
+<div class="mt-4">
+    <a asp-action="Edit" asp-route-id="@Model.SaleID" class="btn btn-warning"><i class="bi bi-pencil"></i> Edit</a>
+    <a asp-action="Index" class="btn btn-secondary"><i class="bi bi-arrow-left"></i> Back to List</a>
 </div>
