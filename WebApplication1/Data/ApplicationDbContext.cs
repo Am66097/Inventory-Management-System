@@ -13,6 +13,7 @@ namespace WebApplication1.Data
         public DbSet<Category> Categories { get; set; }
         public DbSet<Supplier> Suppliers { get; set; }
 
+        public DbSet<SupplierProduct> SupplierProducts { get; set; }
         //for Dev04(omnya)
 
         public DbSet<Product> Products { get; set; }
