@@ -1,4 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using WebApplication1.Data;
 
 namespace WebApplication1
@@ -30,11 +30,10 @@ namespace WebApplication1
 
             app.UseAuthorization();
 
-            app.MapStaticAssets();
+            app.UseStaticFiles();
             app.MapControllerRoute(
                 name: "default",
-                pattern: "{controller=Home}/{action=Index}/{id?}")
-                .WithStaticAssets();
+                pattern: "{controller=Home}/{action=Index}/{id?}");
 
             app.Run();
         }

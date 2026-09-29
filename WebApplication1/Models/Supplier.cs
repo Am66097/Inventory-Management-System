@@ -1,4 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations;
 
 namespace WebApplication1.Models
 {
@@ -28,7 +28,7 @@ namespace WebApplication1.Models
         public string? Address { get; set; }
 
         // Navigation Properties
-        // public ICollection<Purchase> Purchases { get; set; }
+        public virtual ICollection<Purchase> Purchases { get; set; } = new List<Purchase>();
         // public ICollection<SupplierProduct> SupplierProducts { get; set; }
     }
 }
