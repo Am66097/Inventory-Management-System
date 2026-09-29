@@ -1,31 +1,13 @@
-html {
-  font-size: 14px;
+﻿/* تأثير أقوى ومخصص لروابط شريط التنقل */
+header .navbar-nav .nav-item .nav-link {
+    transition: background-color 0.3s ease, color 0.3s ease !important;
+    border-radius: 6px !important;
+    padding: 8px 12px !important;
+    margin: 0 2px !important;
 }
 
-@media (min-width: 768px) {
-  html {
-    font-size: 16px;
-  }
-}
-
-.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
-  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
-}
-
-html {
-  position: relative;
-  min-height: 100%;
-}
-
-body {
-  margin-bottom: 60px;
-}
-
-.form-floating > .form-control-plaintext::placeholder, .form-floating > .form-control::placeholder {
-  color: var(--bs-secondary-color);
-  text-align: end;
-}
-
-.form-floating > .form-control-plaintext:focus::placeholder, .form-floating > .form-control:focus::placeholder {
-  text-align: start;
-}
+    /* التغيير الذي يحدث عند تمرير الماوس */
+    header .navbar-nav .nav-item .nav-link:hover {
+        background-color: #e2e8f0 !important; /* خلفية رمادية فاتحة جداً تريح العين */
+        color: #0d6efd !important; /* تحويل لون النص للأزرق */
+    }
