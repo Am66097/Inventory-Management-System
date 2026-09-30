@@ -1,9 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using WebApplication1.Data; // أو النيمسبيس الخاص بالـ DbContext لديك
+using WebApplication1.Data;
 using WebApplication1.Models;
-
 
 namespace WebApplication1.Controllers
 {
@@ -48,7 +47,6 @@ namespace WebApplication1.Controllers
 
             decimal total = 0;
 
-            // استخدام Transaction لضمان سلامة قاعدة البيانات
             using var transaction = await _context.Database.BeginTransactionAsync();
 
             try
@@ -64,7 +62,6 @@ namespace WebApplication1.Controllers
                         return View(sale);
                     }
 
-                    // التحقق من توافر الكمية في الستوك
                     if (product.StockQuantity < item.Quantity)
                     {
                         ModelState.AddModelError("", $"Insufficient stock for product '{product.ProductName}'. Available: {product.StockQuantity}");
@@ -72,25 +69,20 @@ namespace WebApplication1.Controllers
                         return View(sale);
                     }
 
-                    // 1. اللوجيك الأهم: الخصم التلقائي من الستوك
                     product.StockQuantity -= item.Quantity;
                     _context.Products.Update(product);
 
-                    // 2. حساب السعر وتجميع الإجمالي أوتوماتيك
                     item.UnitPrice = product.UnitPrice;
                     total += (item.UnitPrice * item.Quantity);
 
-                    // إضافة العنصر للفاتورة
                     sale.SalesItems.Add(item);
                 }
 
-                // 3. تعيين إجمالي الفاتورة وتاريخ الشراء
                 sale.TotalAmount = total;
                 sale.SaleDate = DateTime.Now;
 
                 _context.Sales.Add(sale);
 
-                // حفظ التغييرات ودمج العمليات
                 await _context.SaveChangesAsync();
                 await transaction.CommitAsync();
 
@@ -103,6 +95,74 @@ namespace WebApplication1.Controllers
                 ViewBag.Products = new SelectList(_context.Products, "ProductID", "ProductName");
                 return View(sale);
             }
+        }
+
+        // GET: /Sales/Details/1
+        [HttpGet]
+        public async Task<IActionResult> Details(int? id)
+        {
+            if (id == null) return NotFound();
+
+            var sale = await _context.Sales
+                .Include(s => s.SalesItems)
+                .ThenInclude(si => si.Product)
+                .FirstOrDefaultAsync(m => m.SaleID == id);
+
+            if (sale == null) return NotFound();
+
+            return View(sale);
+        }
+
+        // GET: /Sales/Edit/1
+        [HttpGet]
+        public async Task<IActionResult> Edit(int? id)
+        {
+            if (id == null) return NotFound();
+
+            var sale = await _context.Sales.FindAsync(id);
+            if (sale == null) return NotFound();
+
+            return View(sale);
+        }
+
+        // POST: /Sales/Edit/1
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Edit(Sale sale)
+        {
+            if (ModelState.IsValid)
+            {
+                _context.Sales.Update(sale);
+                await _context.SaveChangesAsync();
+                return RedirectToAction(nameof(Index));
+            }
+            return View(sale);
+        }
+
+        // GET: /Sales/Delete/1
+        [HttpGet]
+        public async Task<IActionResult> Delete(int? id)
+        {
+            if (id == null) return NotFound();
+
+            var sale = await _context.Sales.FirstOrDefaultAsync(m => m.SaleID == id);
+            if (sale == null) return NotFound();
+
+            return View(sale);
+        }
+
+        // POST: /Sales/Delete/1
+        [HttpPost, ActionName("Delete")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteConfirmed(int id)
+        {
+            var sale = await _context.Sales.FindAsync(id);
+            if (sale != null)
+            {
+                _context.Sales.Remove(sale);
+                await _context.SaveChangesAsync();
+            }
+            return RedirectToAction(nameof(Index));
         }
     }
 }
