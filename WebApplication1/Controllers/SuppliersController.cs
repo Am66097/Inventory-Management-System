@@ -8,15 +8,30 @@ namespace WebApplication1.Controllers
     public class SuppliersController : Controller
     {
         private readonly ApplicationDbContext _context;
+
         public SuppliersController(ApplicationDbContext context)
         {
             _context = context;
         }
+
         // GET: /Suppliers/Index
-        public IActionResult Index()
+        public IActionResult Index(string searchString)
         {
-            var suppliers = _context.Suppliers.ToList();
-            return View(suppliers);
+            ViewData["CurrentFilter"] = searchString;
+
+            var suppliers = _context.Suppliers.AsQueryable();
+
+            // Search
+            if (!string.IsNullOrWhiteSpace(searchString))
+            {
+                suppliers = suppliers.Where(s =>
+                    s.SupplierName.Contains(searchString) ||
+                    s.ContactName.Contains(searchString) ||
+                    s.Phone.Contains(searchString) ||
+                    s.Email.Contains(searchString));
+            }
+
+            return View(suppliers.ToList());
         }
 
         // GET: /Suppliers/Create
@@ -34,8 +49,10 @@ namespace WebApplication1.Controllers
             {
                 _context.Suppliers.Add(supplier);
                 _context.SaveChanges();
+
                 return RedirectToAction(nameof(Index));
             }
+
             return View(supplier);
         }
 
@@ -44,12 +61,15 @@ namespace WebApplication1.Controllers
         public IActionResult Edit(int id)
         {
             var supplier = _context.Suppliers.Find(id);
+
             if (supplier == null)
             {
                 return NotFound();
             }
+
             return View(supplier);
         }
+
         // POST: /Suppliers/Edit/1
         [HttpPost]
         public IActionResult Edit(Supplier supplier)
@@ -58,8 +78,10 @@ namespace WebApplication1.Controllers
             {
                 _context.Suppliers.Update(supplier);
                 _context.SaveChanges();
+
                 return RedirectToAction(nameof(Index));
             }
+
             return View(supplier);
         }
 
@@ -68,10 +90,12 @@ namespace WebApplication1.Controllers
         public IActionResult Details(int id)
         {
             var supplier = _context.Suppliers.Find(id);
+
             if (supplier == null)
             {
                 return NotFound();
             }
+
             return View(supplier);
         }
 
@@ -80,10 +104,12 @@ namespace WebApplication1.Controllers
         public IActionResult Delete(int id)
         {
             var supplier = _context.Suppliers.Find(id);
+
             if (supplier == null)
             {
                 return NotFound();
             }
+
             return View(supplier);
         }
 
@@ -92,12 +118,15 @@ namespace WebApplication1.Controllers
         public IActionResult DeleteConfirmed(int id)
         {
             var supplier = _context.Suppliers.Find(id);
+
             if (supplier == null)
             {
                 return NotFound();
             }
+
             _context.Suppliers.Remove(supplier);
             _context.SaveChanges();
+
             return RedirectToAction(nameof(Index));
         }
     }

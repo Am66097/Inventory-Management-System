@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using WebApplication1.Data;
 
@@ -11,86 +12,20 @@ using WebApplication1.Data;
 namespace WebApplication1.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260930130920_AddLeadTimeDays")]
+    partial class AddLeadTimeDays
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "8.0.0")
+                .HasAnnotation("ProductVersion", "9.0.0")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("WebApplication1.Models.Category", b =>
-                {
-                    b.Property<int>("CategoryId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("CategoryId"));
-
-                    b.Property<string>("CategoryName")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<string>("Description")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("CategoryId");
-
-                    b.ToTable("Categories");
-                });
-
-            modelBuilder.Entity("WebApplication1.Models.Product", b =>
-                {
-                    b.Property<int>("ProductID")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ProductID"));
-
-                    b.Property<int>("CategoryID")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("LowStockThreshold")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<decimal>("Price")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<string>("ProductName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("SKU")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("StockQuantity")
-                        .HasColumnType("int");
-
-                    b.Property<decimal>("UnitPrice")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.HasKey("ProductID");
-
-                    b.HasIndex("CategoryID");
-
-                    b.ToTable("Products");
-                });
-
-            modelBuilder.Entity("WebApplication1.Models.Purchase", b =>
+            modelBuilder.Entity("InventoryManagement.Models.Purchase", b =>
                 {
                     b.Property<int>("PurchaseID")
                         .ValueGeneratedOnAdd()
@@ -114,7 +49,7 @@ namespace WebApplication1.Migrations
                     b.ToTable("Purchases");
                 });
 
-            modelBuilder.Entity("WebApplication1.Models.PurchaseItem", b =>
+            modelBuilder.Entity("InventoryManagement.Models.PurchaseItem", b =>
                 {
                     b.Property<int>("PurchaseItemID")
                         .ValueGeneratedOnAdd()
@@ -141,6 +76,64 @@ namespace WebApplication1.Migrations
                     b.HasIndex("PurchaseID");
 
                     b.ToTable("PurchaseItems");
+                });
+
+            modelBuilder.Entity("WebApplication1.Models.Category", b =>
+                {
+                    b.Property<int>("CategoryId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("CategoryId"));
+
+                    b.Property<string>("CategoryName")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("CategoryId");
+
+                    b.ToTable("Categories");
+                });
+
+            modelBuilder.Entity("WebApplication1.Models.Products", b =>
+                {
+                    b.Property<int>("ProductID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ProductID"));
+
+                    b.Property<int>("CategoryID")
+                        .HasColumnType("int");
+
+                    b.Property<int>("LowStockThreshold")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ProductName")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("SKU")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<int>("StockQuantity")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("UnitPrice")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.HasKey("ProductID");
+
+                    b.HasIndex("CategoryID");
+
+                    b.ToTable("Products");
                 });
 
             modelBuilder.Entity("WebApplication1.Models.Sale", b =>
@@ -245,9 +238,6 @@ namespace WebApplication1.Migrations
                     b.Property<int>("ContractQuantity")
                         .HasColumnType("int");
 
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
-
                     b.Property<int>("LeadTimeDays")
                         .HasColumnType("int");
 
@@ -259,8 +249,8 @@ namespace WebApplication1.Migrations
 
                     b.Property<string>("SupplierSKU")
                         .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.HasKey("SupplierProductID");
 
@@ -271,21 +261,10 @@ namespace WebApplication1.Migrations
                     b.ToTable("SupplierProducts");
                 });
 
-            modelBuilder.Entity("WebApplication1.Models.Product", b =>
-                {
-                    b.HasOne("WebApplication1.Models.Category", "Category")
-                        .WithMany("Products")
-                        .HasForeignKey("CategoryID")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Category");
-                });
-
-            modelBuilder.Entity("WebApplication1.Models.Purchase", b =>
+            modelBuilder.Entity("InventoryManagement.Models.Purchase", b =>
                 {
                     b.HasOne("WebApplication1.Models.Supplier", "Supplier")
-                        .WithMany("Purchases")
+                        .WithMany()
                         .HasForeignKey("SupplierID")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -293,15 +272,15 @@ namespace WebApplication1.Migrations
                     b.Navigation("Supplier");
                 });
 
-            modelBuilder.Entity("WebApplication1.Models.PurchaseItem", b =>
+            modelBuilder.Entity("InventoryManagement.Models.PurchaseItem", b =>
                 {
-                    b.HasOne("WebApplication1.Models.Product", "Product")
+                    b.HasOne("WebApplication1.Models.Products", "Product")
                         .WithMany()
                         .HasForeignKey("ProductID")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("WebApplication1.Models.Purchase", "Purchase")
+                    b.HasOne("InventoryManagement.Models.Purchase", "Purchase")
                         .WithMany("PurchaseItems")
                         .HasForeignKey("PurchaseID")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -312,10 +291,21 @@ namespace WebApplication1.Migrations
                     b.Navigation("Purchase");
                 });
 
+            modelBuilder.Entity("WebApplication1.Models.Products", b =>
+                {
+                    b.HasOne("WebApplication1.Models.Category", "Category")
+                        .WithMany()
+                        .HasForeignKey("CategoryID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Category");
+                });
+
             modelBuilder.Entity("WebApplication1.Models.SaleItem", b =>
                 {
-                    b.HasOne("WebApplication1.Models.Product", "Product")
-                        .WithMany()
+                    b.HasOne("WebApplication1.Models.Products", "Product")
+                        .WithMany("SalesItems")
                         .HasForeignKey("ProductID")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -333,8 +323,8 @@ namespace WebApplication1.Migrations
 
             modelBuilder.Entity("WebApplication1.Models.SupplierProduct", b =>
                 {
-                    b.HasOne("WebApplication1.Models.Product", "Product")
-                        .WithMany("SupplierProducts")
+                    b.HasOne("WebApplication1.Models.Products", "Product")
+                        .WithMany()
                         .HasForeignKey("ProductID")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -350,29 +340,19 @@ namespace WebApplication1.Migrations
                     b.Navigation("Supplier");
                 });
 
-            modelBuilder.Entity("WebApplication1.Models.Category", b =>
-                {
-                    b.Navigation("Products");
-                });
-
-            modelBuilder.Entity("WebApplication1.Models.Product", b =>
-                {
-                    b.Navigation("SupplierProducts");
-                });
-
-            modelBuilder.Entity("WebApplication1.Models.Purchase", b =>
+            modelBuilder.Entity("InventoryManagement.Models.Purchase", b =>
                 {
                     b.Navigation("PurchaseItems");
+                });
+
+            modelBuilder.Entity("WebApplication1.Models.Products", b =>
+                {
+                    b.Navigation("SalesItems");
                 });
 
             modelBuilder.Entity("WebApplication1.Models.Sale", b =>
                 {
                     b.Navigation("SalesItems");
-                });
-
-            modelBuilder.Entity("WebApplication1.Models.Supplier", b =>
-                {
-                    b.Navigation("Purchases");
                 });
 #pragma warning restore 612, 618
         }
