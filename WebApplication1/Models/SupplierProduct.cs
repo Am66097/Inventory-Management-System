@@ -1,11 +1,11 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using WebApplication1.Models;
+
 namespace WebApplication1.Models
 {
     public class SupplierProduct
     {
-        [Key] // تحديد SupplierProductID كـ Primary Key بناءً على طلب التأسك
+        [Key]
         public int SupplierProductID { get; set; }
 
         [Required(ErrorMessage = "Please select a Supplier.")]
@@ -30,6 +30,10 @@ namespace WebApplication1.Models
 
         [Required(ErrorMessage = "Contract Quantity is required.")]
         public int ContractQuantity { get; set; }
+
+        [Required(ErrorMessage = "Lead Time Days is required.")]
+        [Range(1, 365, ErrorMessage = "Lead Time must be between 1 and 365 days.")]
+        public int LeadTimeDays { get; set; }
 
         public DateTime CreatedAt { get; set; } = DateTime.Now;
     }
