@@ -17,27 +17,32 @@ namespace WebApplication1.Controllers
         }
 
         // GET: /Purchases/Index
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            var purchases = _context.Purchases
+            var purchases = await _context.Purchases
                 .Include(p => p.Supplier)
                 .Include(p => p.PurchaseItems)
                     .ThenInclude(pi => pi.Product)
                 .OrderByDescending(p => p.PurchaseDate)
-                .ToList();
+                .ToListAsync();
 
             return View(purchases);
         }
 
         // GET: /Purchases/Details/1
         [HttpGet]
-        public IActionResult Details(int id)
+        public async Task<IActionResult> Details(int? id)
         {
-            var purchase = _context.Purchases
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var purchase = await _context.Purchases
                 .Include(p => p.Supplier)
                 .Include(p => p.PurchaseItems)
                     .ThenInclude(pi => pi.Product)
-                .FirstOrDefault(p => p.PurchaseID == id);
+                .FirstOrDefaultAsync(p => p.PurchaseID == id);
 
             if (purchase == null)
             {
@@ -58,7 +63,7 @@ namespace WebApplication1.Controllers
         // POST: /Purchases/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Create(Purchase purchase)
+        public async Task<IActionResult> Create(Purchase purchase)
         {
             if (ModelState.IsValid)
             {
@@ -68,7 +73,7 @@ namespace WebApplication1.Controllers
                 }
 
                 _context.Purchases.Add(purchase);
-                _context.SaveChanges();
+                await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
 
@@ -78,9 +83,14 @@ namespace WebApplication1.Controllers
 
         // GET: /Purchases/Edit/1
         [HttpGet]
-        public IActionResult Edit(int id)
+        public async Task<IActionResult> Edit(int? id)
         {
-            var purchase = _context.Purchases.Find(id);
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var purchase = await _context.Purchases.FindAsync(id);
             if (purchase == null)
             {
                 return NotFound();
@@ -93,12 +103,12 @@ namespace WebApplication1.Controllers
         // POST: /Purchases/Edit/1
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Edit(Purchase purchase)
+        public async Task<IActionResult> Edit(Purchase purchase)
         {
             if (ModelState.IsValid)
             {
                 _context.Purchases.Update(purchase);
-                _context.SaveChanges();
+                await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
 
@@ -108,11 +118,16 @@ namespace WebApplication1.Controllers
 
         // GET: /Purchases/Delete/1
         [HttpGet]
-        public IActionResult Delete(int id)
+        public async Task<IActionResult> Delete(int? id)
         {
-            var purchase = _context.Purchases
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var purchase = await _context.Purchases
                 .Include(p => p.Supplier)
-                .FirstOrDefault(p => p.PurchaseID == id);
+                .FirstOrDefaultAsync(p => p.PurchaseID == id);
 
             if (purchase == null)
             {
@@ -125,16 +140,16 @@ namespace WebApplication1.Controllers
         // POST: /Purchases/Delete/1
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public IActionResult DeleteConfirmed(int id)
+        public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var purchase = _context.Purchases.Find(id);
+            var purchase = await _context.Purchases.FindAsync(id);
             if (purchase == null)
             {
                 return NotFound();
             }
 
             _context.Purchases.Remove(purchase);
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
     }
