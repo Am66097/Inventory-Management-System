@@ -42,91 +42,38 @@
 </div>
 
 <div class="row">
-    <!-- 2. جدول تنبيهات النواقص -->
-    <div class="col-md-8">
+    <!-- 2. جدول تنبيهات النواقص (تم تعديله ليأخذ العرض بالكامل col-md-12) -->
+    <div class="col-md-12">
         <h4 class="text-danger mb-3">⚠️ Low-Stock Alerts</h4>
-        <table class="table table-bordered table-striped shadow-sm">
-            <thead class="table-dark">
-                <tr>
-                    <th>Product Name</th>
-                    <th>Current Stock</th>
-                    <th>Threshold</th>
-                </tr>
-            </thead>
-            <tbody>
-                @if (Model.LowStockProducts.Any())
-                {
-                    foreach (var item in Model.LowStockProducts)
+        <div class="table-responsive">
+            <table class="table table-bordered table-striped shadow-sm">
+                <thead class="table-dark">
+                    <tr>
+                        <th>Product Name</th>
+                        <th>Current Stock</th>
+                        <th>Threshold</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model.LowStockProducts.Any())
+                    {
+                        foreach (var item in Model.LowStockProducts)
+                        {
+                            <tr>
+                                <td>@item.ProductName</td>
+                                <td class="text-danger fw-bold">@item.StockQuantity</td>
+                                <td>@item.LowStockThreshold</td>
+                            </tr>
+                        }
+                    }
+                    else
                     {
                         <tr>
-                            <td>@item.ProductName</td>
-                            <td class="text-danger fw-bold">@item.StockQuantity</td>
-                            <td>@item.LowStockThreshold</td>
+                            <td colspan="3" class="text-center text-success fw-bold">All products are well stocked!</td>
                         </tr>
                     }
-                }
-                else
-                {
-                    <tr>
-                        <td colspan="3" class="text-center text-success fw-bold">All products are well stocked!</td>
-                    </tr>
-                }
-            </tbody>
-        </table>
-    </div>
-
-    <!-- 3. المساعد الذكي (AI Chatbot) -->
-    <div class="col-md-4">
-        <h4 class="text-info mb-3">🤖 AI Inventory Assistant</h4>
-        <div class="card shadow-sm">
-            <div class="card-body" id="chatBox" style="height: 250px; overflow-y: auto; background-color: #f8f9fa;">
-                <p class="text-muted small">Ask me anything about your inventory...</p>
-            </div>
-            <div class="card-footer">
-                <div class="input-group">
-                    <input type="text" id="userInput" class="form-control" placeholder="Ask AI..." />
-                    <button class="btn btn-primary" id="btnSend">Send</button>
-                </div>
-            </div>
+                </tbody>
+            </table>
         </div>
     </div>
 </div>
-
-<!-- سكريبت الـ AJAX لتشغيل الشات بدون ريفريش -->
-@section Scripts {
-    <script>
-        document.getElementById("btnSend").addEventListener("click", async function () {
-            let input = document.getElementById("userInput");
-            let message = input.value.trim();
-            if (!message) return;
-
-            let chatBox = document.getElementById("chatBox");
-
-            // عرض رسالة اليوزر
-            chatBox.innerHTML += `<div class="text-end mb-2"><span class="bg-primary text-white p-2 rounded">User: ${message}</span></div>`;
-            input.value = "";
-            chatBox.scrollTop = chatBox.scrollHeight;
-
-            // إرسال الطلب للـ Controller
-            try {
-                let response = await fetch('/Home/AskAiAssistant', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(message)
-                });
-
-                if (response.ok) {
-                    let data = await response.json();
-                    // عرض رد الذكاء الاصطناعي
-                    chatBox.innerHTML += `<div class="text-start mb-2"><span class="bg-info text-dark p-2 rounded">AI: ${data.reply}</span></div>`;
-                } else {
-                    chatBox.innerHTML += `<div class="text-start mb-2 text-danger">Error connecting to AI.</div>`;
-                }
-            } catch (err) {
-                chatBox.innerHTML += `<div class="text-start mb-2 text-danger">Network Error.</div>`;
-            }
-
-            chatBox.scrollTop = chatBox.scrollHeight;
-        });
-    </script>
-}
