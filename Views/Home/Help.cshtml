@@ -1,0 +1,201 @@
+﻿@{
+    ViewData["Title"] = "Help & Support Center";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h2 class="fw-bold mb-1" style="color: #f8fafc;">❓ Help & Support Center</h2>
+        <p class="text-secondary small mb-0">Learn how to manage inventory, sales, and execute tasks directly</p>
+    </div>
+</div>
+
+<div class="d-flex flex-column gap-3">
+
+    <!-- 1. كارت إضافة منتج وتحديد حد الأمان (ينقلك لإنشاء منتج مباشرة) -->
+    <a asp-controller="Products" asp-action="Create" class="help-card text-decoration-none p-4 rounded-4 d-flex justify-content-between align-items-center">
+        <div>
+            <h5 class="fw-bold text-info mb-2">
+                📦 How to add products and set stock thresholds?
+            </h5>
+            <p class="text-secondary mb-0 small">
+                Click here to directly open the product creation page, assign initial stock, and specify the LowStockThreshold for automated depletion warnings.
+            </p>
+        </div>
+        <div class="action-btn">
+            <span class="btn btn-outline-info btn-sm px-3 rounded-pill">
+                Add Product <i class="bi bi-arrow-right ms-1"></i>
+            </span>
+        </div>
+    </a>
+
+    <!-- 2. كارت عقود الموردين (ينقلك لصفحة عقود الموردين مباشرة) -->
+    <a asp-controller="SupplierProducts" asp-action="Index" class="help-card text-decoration-none p-4 rounded-4 d-flex justify-content-between align-items-center">
+        <div>
+            <h5 class="fw-bold text-warning mb-2">
+                🤝 How are supplier contracts managed?
+            </h5>
+            <p class="text-secondary mb-0 small">
+                Click here to navigate directly to Supplier Contracts, where you can correlate vendor catalogs and view linked procurement agreements.
+            </p>
+        </div>
+        <div class="action-btn">
+            <span class="btn btn-outline-warning btn-sm px-3 rounded-pill">
+                Manage Contracts <i class="bi bi-arrow-right ms-1"></i>
+            </span>
+        </div>
+    </a>
+
+    <!-- 3. كارت مساعد الذكاء الاصطناعي (يفتح نافذة الشات التفاعلية فوراً) -->
+    <div class="help-card p-4 rounded-4 d-flex justify-content-between align-items-center" onclick="openHelpAIChat()" style="cursor: pointer;">
+        <div>
+            <h5 class="fw-bold text-primary mb-2">
+                🤖 How to use Stockora AI Assistant?
+            </h5>
+            <p class="text-secondary mb-0 small">
+                Click here to launch the interactive AI Copilot now. You can ask about current inventory, stock levels, or step-by-step guidance in Arabic or English.
+            </p>
+        </div>
+        <div class="action-btn">
+            <span class="btn btn-primary btn-sm px-3 rounded-pill shadow-sm" style="background: linear-gradient(135deg, #4f46e5, #6366f1); border: none;">
+                Launch Assistant <i class="bi bi-chat-dots-fill ms-1"></i>
+            </span>
+        </div>
+    </div>
+
+</div>
+
+<!-- نافذة الشات المنبثقة التفاعلية للمساعد داخل صفحة Help -->
+<div id="helpAiChatWindow">
+    <div style="background: #1f2738; padding: 14px 18px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.08);">
+        <div style="display: flex; align-items: center; gap: 10px;">
+            <span style="font-size: 24px;">🤖</span>
+            <div>
+                <div style="font-weight: 700; color: #fff; font-size: 14px;">Stockora AI Assistant</div>
+                <div style="font-size: 11px; color: #10b981;">Online & Ready to Help</div>
+            </div>
+        </div>
+        <button onclick="closeHelpAIChat()" style="background: none; border: none; color: #94a3b8; font-size: 24px; cursor: pointer; line-height: 1;">&times;</button>
+    </div>
+
+    <div id="helpChatBox" style="flex: 1; padding: 16px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; background: #0f131d;">
+        <div style="background: #1f2738; color: #e2e8f0; padding: 10px 14px; border-radius: 14px; border-top-left-radius: 2px; align-self: flex-start; max-width: 85%; font-size: 13px; line-height: 1.5;">
+            مرحباً بك في مركز المساعدة! 👋 أنا مساعدك الذكي. كيف يمكنني خدمتك أو الإجابة على تساؤلاتك حول النظام اليوم؟
+        </div>
+    </div>
+
+    <div style="padding: 12px; background: #1f2738; display: flex; gap: 8px; border-top: 1px solid rgba(255,255,255,0.08);">
+        <input type="text" id="helpUserInput" placeholder="Ask AI anything..."
+               style="flex: 1; background: #0f131d; border: 1px solid #2b3245; color: #fff; padding: 10px 14px; border-radius: 12px; outline: none; font-size: 13.5px;" />
+        <button onclick="sendHelpAiMessage()"
+                style="background: linear-gradient(135deg, #4f46e5, #6366f1); color: white; border: none; padding: 10px 18px; border-radius: 12px; font-weight: 600; font-size: 13px; cursor: pointer;">
+            Send
+        </button>
+    </div>
+</div>
+
+<style>
+    .help-card {
+        background: #161b26;
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        transition: all 0.25s ease;
+    }
+
+        .help-card:hover {
+            transform: translateY(-3px);
+            border-color: rgba(99, 102, 241, 0.4);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+        }
+
+    #helpAiChatWindow {
+        display: none;
+        position: fixed;
+        bottom: 30px;
+        right: 30px;
+        width: 380px;
+        height: 500px;
+        background: #161b26;
+        border-radius: 20px;
+        box-shadow: 0 20px 60px rgba(0,0,0,0.7);
+        z-index: 1050;
+        flex-direction: column;
+        overflow: hidden;
+        border: 1px solid rgba(255, 255, 255, 0.12);
+    }
+
+    @@media (max-width: 768px) {
+        .help-card {
+            flex-direction: column;
+            align-items: flex-start !important;
+            gap: 15px;
+        }
+
+        #helpAiChatWindow {
+            width: calc(100% - 30px);
+            right: 15px;
+            bottom: 15px;
+        }
+    }
+</style>
+
+@section Scripts {
+    <script>
+        function openHelpAIChat() {
+            document.getElementById("helpAiChatWindow").style.display = "flex";
+            document.getElementById("helpUserInput").focus();
+        }
+
+        function closeHelpAIChat() {
+            document.getElementById("helpAiChatWindow").style.display = "none";
+        }
+
+        async function sendHelpAiMessage() {
+            let input = document.getElementById("helpUserInput");
+            let message = input.value.trim();
+            if (!message) return;
+
+            let chatBox = document.getElementById("helpChatBox");
+            chatBox.innerHTML += `
+                        <div style="background: linear-gradient(135deg, #4f46e5, #6366f1); color: white; padding: 10px 14px; border-radius: 14px; border-top-right-radius: 2px; align-self: flex-end; max-width: 85%; font-size: 13px;">
+                            ${message}
+                        </div>`;
+            input.value = "";
+            chatBox.scrollTop = chatBox.scrollHeight;
+
+            let loadingId = "load_" + Date.now();
+            chatBox.innerHTML += `
+                        <div id="${loadingId}" style="background: #1f2738; color: #94a3b8; padding: 8px 12px; border-radius: 12px; align-self: flex-start; font-size: 12px;">
+                            Thinking...
+                        </div>`;
+            chatBox.scrollTop = chatBox.scrollHeight;
+
+            try {
+                let response = await fetch('/Home/AskAiAssistant', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(message)
+                });
+
+                document.getElementById(loadingId)?.remove();
+
+                if (response.ok) {
+                    let data = await response.json();
+                    chatBox.innerHTML += `
+                                <div style="background: #1f2738; color: #e2e8f0; padding: 10px 14px; border-radius: 14px; border-top-left-radius: 2px; align-self: flex-start; max-width: 85%; font-size: 13px; line-height: 1.5; white-space: pre-line;">
+                                    ${data.reply}
+                                </div>`;
+                } else {
+                    chatBox.innerHTML += `<div style="color: #ef4444; font-size: 12px;">⚠️ Communication error.</div>`;
+                }
+            } catch {
+                document.getElementById(loadingId)?.remove();
+                chatBox.innerHTML += `<div style="color: #ef4444; font-size: 12px;">⚠️ Network error.</div>`;
+            }
+
+            chatBox.scrollTop = chatBox.scrollHeight;
+        }
+
+        document.getElementById("helpUserInput").addEventListener("keypress", function(e) {
+            if (e.key === "Enter") sendHelpAiMessage();
+        });
+    </script>
+}

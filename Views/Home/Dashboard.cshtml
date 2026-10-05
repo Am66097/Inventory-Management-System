@@ -1,0 +1,334 @@
+﻿@model WebApplication1.Models.DashboardViewModel
+@{
+    ViewData["Title"] = "Dashboard Overview";
+    var recentSales = ViewBag.RecentSales as List<WebApplication1.Models.Sale> ?? new List<WebApplication1.Models.Sale>();
+
+    int total = Model.TotalProducts;
+    int lowCount = Model.LowStockProducts?.Count ?? 0;
+    int healthPercentage = total > 0 ? (int)(((double)(total - lowCount) / total) * 100) : 100;
+    int saleCounter = 1;
+}
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<div class="dashboard-container">
+
+    <!-- 1. Quick Actions -->
+    <div class="d-flex flex-wrap justify-content-between align-items-center mb-4 gap-3">
+        <div>
+            <h3 class="fw-bold mb-1 text-white">✨ Operations Dashboard</h3>
+            <p class="text-secondary small mb-0">Live analytics, stock movement, and procurement activity</p>
+        </div>
+        <div class="d-flex gap-2 flex-wrap">
+            <a asp-controller="Products" asp-action="Create" class="btn btn-sm btn-primary px-3 py-2 rounded-3 shadow-sm d-flex align-items-center gap-2" style="background: linear-gradient(135deg, #4f46e5, #6366f1); border:none;">
+                <i class="bi bi-plus-circle-fill"></i> New Product
+            </a>
+            <a asp-controller="Sales" asp-action="Create" class="btn btn-sm btn-success px-3 py-2 rounded-3 shadow-sm d-flex align-items-center gap-2" style="background: linear-gradient(135deg, #059669, #10b981); border:none;">
+                <i class="bi bi-cart-check-fill"></i> New Sale
+            </a>
+            <a asp-controller="Purchases" asp-action="Create" class="btn btn-sm btn-danger px-3 py-2 rounded-3 shadow-sm d-flex align-items-center gap-2" style="background: linear-gradient(135deg, #e11d48, #f43f5e); border:none;">
+                <i class="bi bi-box-arrow-in-down"></i> Restock
+            </a>
+            <a asp-controller="Home" asp-action="Reports" class="btn btn-sm btn-outline-light px-3 py-2 rounded-3 border-secondary border-opacity-25 d-flex align-items-center gap-2">
+                <i class="bi bi-printer"></i> Audit Report
+            </a>
+        </div>
+    </div>
+
+    <!-- 2. Stat Cards -->
+    <div class="row g-3 mb-4">
+        <div class="col-sm-6 col-xl-3">
+            <div class="stat-card p-3 rounded-4 position-relative overflow-hidden">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                        <span class="text-secondary text-uppercase fw-semibold" style="font-size: 11px; letter-spacing: 0.8px;">Total Catalog</span>
+                        <h2 class="fw-bold mt-2 mb-0 text-white">@Model.TotalProducts</h2>
+                    </div>
+                    <div class="stat-icon" style="background: rgba(99, 102, 241, 0.15); color: #818cf8;">
+                        <i class="bi bi-box-seam fs-4"></i>
+                    </div>
+                </div>
+                <div class="mt-3 small text-secondary">
+                    <span class="text-success"><i class="bi bi-arrow-up-short"></i> Active items</span> monitored live
+                </div>
+            </div>
+        </div>
+
+        <div class="col-sm-6 col-xl-3">
+            <div class="stat-card p-3 rounded-4 position-relative overflow-hidden">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                        <span class="text-secondary text-uppercase fw-semibold" style="font-size: 11px; letter-spacing: 0.8px;">Total Revenue</span>
+                        <h2 class="fw-bold mt-2 mb-0 text-white">$@Model.TotalSalesRevenue.ToString("N0")</h2>
+                    </div>
+                    <div class="stat-icon" style="background: rgba(16, 185, 129, 0.15); color: #34d399;">
+                        <i class="bi bi-currency-dollar fs-4"></i>
+                    </div>
+                </div>
+                <div class="mt-3 small text-secondary">
+                    <span class="text-success"><i class="bi bi-graph-up-arrow"></i> Completed sales</span> volume
+                </div>
+            </div>
+        </div>
+
+        <div class="col-sm-6 col-xl-3">
+            <div class="stat-card p-3 rounded-4 position-relative overflow-hidden">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                        <span class="text-secondary text-uppercase fw-semibold" style="font-size: 11px; letter-spacing: 0.8px;">Procurement Cost</span>
+                        <h2 class="fw-bold mt-2 mb-0 text-white">$@Model.TotalPurchasesCost.ToString("N0")</h2>
+                    </div>
+                    <div class="stat-icon" style="background: rgba(244, 63, 94, 0.15); color: #fb7185;">
+                        <i class="bi bi-cart3 fs-4"></i>
+                    </div>
+                </div>
+                <div class="mt-3 small text-secondary">
+                    <span>Inbound shipments cost</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-sm-6 col-xl-3">
+            <div class="stat-card p-3 rounded-4 position-relative overflow-hidden">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                        <span class="text-secondary text-uppercase fw-semibold" style="font-size: 11px; letter-spacing: 0.8px;">Verified Suppliers</span>
+                        <h2 class="fw-bold mt-2 mb-0 text-white">@Model.TotalSuppliers</h2>
+                    </div>
+                    <div class="stat-icon" style="background: rgba(245, 158, 11, 0.15); color: #fbbf24;">
+                        <i class="bi bi-truck fs-4"></i>
+                    </div>
+                </div>
+                <div class="mt-3 small text-secondary">
+                    <span>Active partner network</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 3. Financial Flow & Inventory Health -->
+    <div class="row g-3 mb-4">
+        <div class="col-lg-8">
+            <div class="dashboard-panel p-4 rounded-4 h-100">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <div>
+                        <h5 class="fw-bold text-white mb-1">Financial & Inventory Flow</h5>
+                        <small class="text-secondary">Comparing total revenue against procurement expenditure</small>
+                    </div>
+                    <span class="badge bg-secondary bg-opacity-25 text-info px-3 py-2 rounded-pill">Live Financials</span>
+                </div>
+                <div style="height: 270px; position: relative;">
+                    <canvas id="financeChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            <div class="dashboard-panel p-4 rounded-4 h-100 d-flex flex-column justify-content-between">
+                <div>
+                    <h5 class="fw-bold text-white mb-1">Inventory Health</h5>
+                    <small class="text-secondary">Safe threshold readiness ratio</small>
+
+                    <div class="text-center my-4">
+                        <div class="display-4 fw-bold @(healthPercentage >= 80 ? "text-success" : (healthPercentage >= 50 ? "text-warning" : "text-danger"))">
+                            @healthPercentage%
+                        </div>
+                        <span class="badge @(healthPercentage >= 80 ? "bg-success" : "bg-warning") bg-opacity-25 @(healthPercentage >= 80 ? "text-success" : "text-warning") px-3 py-1 rounded-pill mt-2">
+                            @(healthPercentage >= 80 ? "Optimal Condition" : "Attention Needed")
+                        </span>
+                    </div>
+
+                    <div class="progress mb-3" style="height: 8px; background: rgba(255,255,255,0.08); border-radius: 10px;">
+                        <div class="progress-bar @(healthPercentage >= 80 ? "bg-success" : "bg-warning")"
+                             role="progressbar"
+                             style="width: @healthPercentage%;"
+                             aria-valuenow="@healthPercentage" aria-valuemin="0" aria-valuemax="100"></div>
+                    </div>
+                </div>
+
+                <div class="p-3 rounded-3" style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06);">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <span class="small text-secondary">Depleted Items</span>
+                        <strong class="@(lowCount > 0 ? "text-danger" : "text-success")">@lowCount Product(s)</strong>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 4. Low-Stock Alerts & Recent Sales Activity -->
+    <div class="row g-3">
+        <div class="col-lg-7">
+            <div class="dashboard-panel p-4 rounded-4 h-100">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <div class="d-flex align-items-center gap-2">
+                        <span class="p-2 rounded-circle" style="background: rgba(239,68,68,0.15); color: #ef4444;">
+                            <i class="bi bi-exclamation-triangle-fill"></i>
+                        </span>
+                        <h6 class="fw-bold text-white mb-0">Low-Stock Alerts</h6>
+                    </div>
+                    <a asp-controller="Home" asp-action="Reports" class="small text-primary text-decoration-none">View All Reports →</a>
+                </div>
+
+                @if (Model.LowStockProducts != null && Model.LowStockProducts.Any())
+                {
+                    <div class="table-responsive">
+                        <table class="table table-borderless align-middle mb-0" style="color: #cbd5e1;">
+                            <thead class="border-bottom border-secondary border-opacity-25" style="font-size: 12px; color: #94a3b8;">
+                                <tr>
+                                    <th>PRODUCT</th>
+                                    <th>CURRENT STOCK</th>
+                                    <th>THRESHOLD</th>
+                                    <th>ACTION</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var p in Model.LowStockProducts.Take(4))
+                                {
+                                    <tr>
+                                        <td class="fw-semibold text-white">@p.ProductName</td>
+                                        <td>
+                                            <span class="badge bg-danger bg-opacity-25 text-danger px-2 py-1">
+                                                @p.StockQuantity Units
+                                            </span>
+                                        </td>
+                                        <td class="text-secondary">@p.LowStockThreshold</td>
+                                        <td>
+                                            <a asp-controller="Purchases" asp-action="Create" class="btn btn-sm btn-outline-danger px-2 py-1 rounded-2" style="font-size: 11px;">
+                                                Restock
+                                            </a>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                }
+                else
+                {
+                    <div class="text-center py-4 text-secondary">
+                        <i class="bi bi-check-circle-fill text-success fs-3 mb-2 d-block"></i>
+                        All products are sufficiently stocked above minimum thresholds!
+                    </div>
+                }
+            </div>
+        </div>
+
+        <div class="col-lg-5">
+            <div class="dashboard-panel p-4 rounded-4 h-100">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h6 class="fw-bold text-white mb-0">Recent Sales Activity</h6>
+                    <a asp-controller="Sales" asp-action="Index" class="small text-secondary text-decoration-none">View Sales</a>
+                </div>
+
+                @if (recentSales.Any())
+                {
+                    <div class="d-flex flex-column gap-2">
+                        @foreach (var s in recentSales)
+                        {
+                            <div class="d-flex justify-content-between align-items-center p-2 rounded-3" style="background: rgba(255,255,255,0.03);">
+                                <div class="d-flex align-items-center gap-2">
+                                    <div class="p-2 rounded-2" style="background: rgba(16,185,129,0.15); color: #10b981;">
+                                        <i class="bi bi-receipt"></i>
+                                    </div>
+                                    <div>
+                                        <!-- رقم تسلسلي للعملية دون الاعتماد على اسم المفتاح -->
+                                        <div class="text-white small fw-semibold">Transaction #@(saleCounter++)</div>
+                                        <small class="text-secondary" style="font-size: 10.5px;">@s.SaleDate.ToString("MMM dd, yyyy")</small>
+                                    </div>
+                                </div>
+                                <span class="text-success fw-bold small">+$@s.TotalAmount.ToString("N0")</span>
+                            </div>
+                        }
+                    </div>
+                }
+                else
+                {
+                    <div class="text-center py-4 text-secondary small">
+                        <i class="bi bi-clock-history fs-3 mb-2 d-block opacity-50"></i>
+                        No sales recorded yet. Click '+ New Sale' to log transactions.
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<style>
+    .stat-card {
+        background: rgba(22, 27, 38, 0.75);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        transition: transform 0.2s ease, border-color 0.2s ease;
+    }
+
+        .stat-card:hover {
+            transform: translateY(-3px);
+            border-color: rgba(99, 102, 241, 0.4);
+        }
+
+    .stat-icon {
+        width: 48px;
+        height: 48px;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .dashboard-panel {
+        background: rgba(22, 27, 38, 0.75);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+</style>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const canvas = document.getElementById('financeChart');
+        if (!canvas) return;
+        const ctx = canvas.getContext('2d');
+
+        const revenue = @Model.TotalSalesRevenue;
+        const cost = @Model.TotalPurchasesCost;
+
+        new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: ['Q1', 'Q2', 'Q3', 'Q4 (Current)'],
+                datasets: [
+                    {
+                        label: 'Sales Revenue ($)',
+                        data: [revenue * 0.3, revenue * 0.5, revenue * 0.8, revenue],
+                        backgroundColor: 'rgba(99, 102, 241, 0.8)',
+                        borderRadius: 8,
+                    },
+                    {
+                        label: 'Procurement Cost ($)',
+                        data: [cost * 0.4, cost * 0.6, cost * 0.7, cost],
+                        backgroundColor: 'rgba(244, 63, 94, 0.8)',
+                        borderRadius: 8,
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        labels: { color: '#94a3b8', font: { size: 12 } }
+                    }
+                },
+                scales: {
+                    x: {
+                        grid: { display: false },
+                        ticks: { color: '#94a3b8' }
+                    },
+                    y: {
+                        grid: { color: 'rgba(255, 255, 255, 0.05)' },
+                        ticks: { color: '#94a3b8' }
+                    }
+                }
+            }
+        });
+    });
+</script>

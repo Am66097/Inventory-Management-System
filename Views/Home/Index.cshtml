@@ -1,0 +1,961 @@
+﻿@{
+    Layout = null;
+    ViewData["Title"] = "Stockora - Smart Inventory System";
+
+    // التحقق الدقيق من حالة تسجيل الدخول
+    string? userCookie = Context.Request.Cookies["UserName"];
+    bool isLoggedIn = !string.IsNullOrEmpty(userCookie);
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Stockora - Smart Inventory System</title>
+    
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: #0b111e;
+            color: #ffffff;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            overflow-x: hidden;
+        }
+
+            .home-page {
+                background-color: #0b111e;
+                background-image: linear-gradient(rgba(11, 17, 30, 0.88), rgba(11, 17, 30, 0.94)), radial-gradient(circle at 85% 15%, rgba(67, 56, 202, 0.22), transparent 45%), radial-gradient(circle at 10% 75%, rgba(16, 185, 129, 0.12), transparent 40%), url('https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?q=80&w=1920&auto=format&fit=crop');
+                background-size: cover;
+                background-position: center;
+                background-attachment: fixed;
+                min-height: 100vh;
+            }
+
+        /* ================= NAVBAR ================= */
+        .landing-header {
+            padding: 22px 8%;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            background: rgba(11, 17, 30, 0.7);
+            backdrop-filter: blur(12px);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .brand-logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
+            color: #ffffff;
+            font-weight: 800;
+            font-size: 20px;
+            letter-spacing: -0.5px;
+        }
+
+        .brand-logo-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
+            background: linear-gradient(135deg, #4f46e5, #6366f1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 18px;
+            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.35);
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .btn-nav-login {
+            color: #cbd5e1;
+            text-decoration: none;
+            font-size: 14.5px;
+            font-weight: 600;
+            padding: 8px 18px;
+            border-radius: 10px;
+            transition: all 0.25s ease;
+        }
+
+        .btn-nav-login:hover {
+            color: #ffffff;
+            background: rgba(255, 255, 255, 0.06);
+        }
+
+        .btn-nav-signup {
+            background: linear-gradient(135deg, #4f46e5, #6366f1);
+            color: #ffffff !important;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 600;
+            padding: 9px 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(99, 102, 241, 0.35);
+            transition: all 0.25s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .btn-nav-signup:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(99, 102, 241, 0.5);
+        }
+
+        /* ================= HERO ================= */
+        .hero {
+            min-height: 640px;
+            display: flex;
+            align-items: center;
+            position: relative;
+            padding: 70px 8%;
+        }
+
+        .hero-content {
+            max-width: 620px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 7px 16px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            background: rgba(22, 27, 38, 0.85);
+            border-radius: 50px;
+            color: #a5b4fc;
+            font-size: 13px;
+            font-weight: 500;
+            margin-bottom: 22px;
+            backdrop-filter: blur(8px);
+        }
+
+        .hero-badge span {
+            width: 8px;
+            height: 8px;
+            background: #10b981;
+            border-radius: 50%;
+            box-shadow: 0 0 10px #10b981;
+        }
+
+        .hero h1 {
+            font-size: clamp(42px, 5.5vw, 68px);
+            line-height: 1.1;
+            font-weight: 800;
+            letter-spacing: -1.5px;
+            margin-bottom: 20px;
+            color: #ffffff;
+        }
+
+        .hero h1 .highlight {
+            background: linear-gradient(135deg, #818cf8 0%, #34d399 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hero-description {
+            color: #94a3b8;
+            font-size: 16.5px;
+            line-height: 1.7;
+            max-width: 540px;
+            margin-bottom: 35px;
+        }
+
+        .hero-buttons {
+            display: flex;
+            gap: 14px;
+            flex-wrap: wrap;
+        }
+
+        .btn-main {
+            padding: 13px 28px;
+            border-radius: 12px;
+            text-decoration: none;
+            color: white;
+            font-weight: 600;
+            font-size: 15px;
+            background: linear-gradient(135deg, #4f46e5 0%, #6366f1 100%);
+            box-shadow: 0 8px 24px rgba(79, 70, 229, 0.35);
+            transition: all 0.25s ease;
+            display: inline-flex;
+            align-items: center;
+        }
+
+        .btn-main:hover {
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 12px 28px rgba(79, 70, 229, 0.5);
+        }
+
+        .btn-outline-custom {
+            padding: 13px 26px;
+            border-radius: 12px;
+            text-decoration: none;
+            color: #cbd5e1;
+            font-weight: 500;
+            font-size: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            background: rgba(22, 27, 38, 0.6);
+            transition: all 0.25s ease;
+            display: inline-flex;
+            align-items: center;
+        }
+
+        .btn-outline-custom:hover {
+            color: white;
+            background: rgba(255, 255, 255, 0.08);
+            border-color: rgba(255, 255, 255, 0.25);
+            transform: translateY(-2px);
+        }
+
+        /* ================= HERO VISUAL ================= */
+        .hero-visual {
+            position: absolute;
+            right: 8%;
+            width: 440px;
+            height: 440px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .glow-circle {
+            position: absolute;
+            width: 360px;
+            height: 360px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(99, 102, 241, 0.18) 0%, rgba(16, 185, 129, 0.1) 70%, transparent 100%);
+            filter: blur(20px);
+        }
+
+        .inventory-card {
+            width: 370px;
+            min-height: 250px;
+            position: relative;
+            z-index: 2;
+            padding: 24px;
+            border-radius: 20px;
+            background: #161b26;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.6);
+            transform: rotate(-3deg);
+        }
+
+        .card-header-custom {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .mini-logo {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 700;
+            font-size: 15px;
+            color: #ffffff;
+        }
+
+        .mini-logo-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #4f46e5, #6366f1);
+        }
+
+        .status {
+            color: #10b981;
+            font-size: 11px;
+            background: rgba(16, 185, 129, 0.12);
+            border: 1px solid rgba(16, 185, 129, 0.25);
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-weight: 600;
+        }
+
+        .stock-number {
+            font-size: 40px;
+            font-weight: 800;
+            color: #ffffff;
+            letter-spacing: -1px;
+        }
+
+        .stock-label {
+            color: #94a3b8;
+            font-size: 13px;
+        }
+
+        .progress-custom {
+            height: 6px;
+            background: #232b3b;
+            border-radius: 20px;
+            overflow: hidden;
+            margin-top: 18px;
+        }
+
+        .progress-custom div {
+            width: 76%;
+            height: 100%;
+            background: linear-gradient(90deg, #6366f1, #10b981);
+            border-radius: 20px;
+        }
+
+        .floating-box {
+            position: absolute;
+            z-index: 5;
+            padding: 12px 16px;
+            border-radius: 14px;
+            background: rgba(22, 27, 38, 0.95);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.4);
+        }
+
+        .floating-box.one {
+            top: 50px;
+            right: -10px;
+            animation: floatingCard 4s ease-in-out infinite;
+        }
+
+        .floating-box.two {
+            bottom: 50px;
+            left: -10px;
+            animation: floatingCard 5s ease-in-out infinite;
+        }
+
+        .floating-icon {
+            width: 32px;
+            height: 32px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 8px;
+            background: rgba(16, 185, 129, 0.15);
+            color: #10b981;
+            margin-right: 8px;
+        }
+
+        @@keyframes floatingCard {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        /* ================= STATS ================= */
+        .stats-section {
+            padding: 55px 8%;
+            background: #090e18;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .stat-box {
+            text-align: center;
+            padding: 15px;
+        }
+
+        .stat-number {
+            font-size: 34px;
+            font-weight: 800;
+            color: #f8fafc;
+            letter-spacing: -0.5px;
+        }
+
+        .stat-label {
+            color: #64748b;
+            font-size: 13px;
+            margin-top: 4px;
+            font-weight: 500;
+        }
+
+        /* ================= FEATURES ================= */
+        .features-section {
+            padding: 90px 8%;
+            background: #0b111e;
+        }
+
+        .section-title {
+            text-align: center;
+            max-width: 600px;
+            margin: auto;
+            margin-bottom: 50px;
+        }
+
+        .section-title .small-title {
+            color: #818cf8;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-weight: 700;
+        }
+
+        .section-title h2 {
+            font-size: 36px;
+            font-weight: 800;
+            margin: 12px 0;
+            color: #ffffff;
+            letter-spacing: -0.5px;
+        }
+
+        .section-title p {
+            color: #94a3b8;
+            line-height: 1.6;
+            font-size: 15px;
+        }
+
+        .feature-card {
+            display: block;
+            text-decoration: none !important;
+            height: 100%;
+            padding: 26px;
+            border-radius: 18px;
+            background: #161b26;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            transition: all 0.25s ease;
+            cursor: pointer;
+            color: inherit;
+            position: relative;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+            border-color: rgba(99, 102, 241, 0.35);
+            box-shadow: 0 16px 36px rgba(0, 0, 0, 0.45);
+            color: inherit;
+        }
+
+        .feature-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            margin-bottom: 20px;
+            transition: transform 0.25s ease;
+        }
+
+        .feature-card:hover .feature-icon {
+            transform: scale(1.08);
+        }
+
+        .icon-products {
+            background: linear-gradient(135deg, rgba(30, 27, 75, 0.8), rgba(67, 56, 202, 0.5));
+            border: 1px solid rgba(99, 102, 241, 0.4);
+            color: #a5b4fc;
+        }
+
+        .icon-suppliers {
+            background: linear-gradient(135deg, rgba(120, 53, 15, 0.8), rgba(217, 119, 6, 0.5));
+            border: 1px solid rgba(245, 158, 11, 0.4);
+            color: #fcd34d;
+        }
+
+        .icon-purchases {
+            background: linear-gradient(135deg, rgba(112, 26, 117, 0.8), rgba(190, 18, 60, 0.5));
+            border: 1px solid rgba(244, 63, 94, 0.4);
+            color: #f43f5e;
+        }
+
+        .icon-sales {
+            background: linear-gradient(135deg, rgba(6, 78, 59, 0.8), rgba(5, 150, 105, 0.5));
+            border: 1px solid rgba(16, 185, 129, 0.4);
+            color: #34d399;
+        }
+
+        .icon-stock {
+            background: linear-gradient(135deg, rgba(30, 41, 59, 0.9), rgba(51, 65, 85, 0.7));
+            border: 1px solid rgba(148, 163, 184, 0.3);
+            color: #38bdf8;
+        }
+
+        .icon-ai {
+            background: linear-gradient(135deg, #6366f1, #8b5cf6);
+            box-shadow: 0 4px 15px rgba(99, 102, 241, 0.4);
+            color: #ffffff;
+        }
+
+        .feature-card h4 {
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 10px;
+            color: #ffffff;
+        }
+
+        .feature-card p {
+            color: #94a3b8;
+            line-height: 1.6;
+            margin: 0;
+            font-size: 14px;
+        }
+
+        .lock-badge {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: #94a3b8;
+            font-size: 11px;
+            padding: 4px 10px;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        /* ================= CTA ================= */
+        .cta-section {
+            padding: 80px 8%;
+        }
+
+        .cta-box {
+            position: relative;
+            overflow: hidden;
+            padding: 60px 40px;
+            border-radius: 24px;
+            text-align: center;
+            background: radial-gradient(circle at 20% 20%, rgba(67, 56, 202, 0.25), transparent 40%), 
+                        radial-gradient(circle at 80% 80%, rgba(5, 150, 105, 0.15), transparent 40%), 
+                        #161b26;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .cta-box h2 {
+            font-size: 34px;
+            font-weight: 800;
+            margin-bottom: 12px;
+            color: #ffffff;
+        }
+
+        .cta-box p {
+            color: #94a3b8;
+            margin-bottom: 28px;
+            font-size: 15px;
+        }
+
+        /* نافذة الشات الذكي المنبثقة */
+        #homeAiChatWindow {
+            display: none;
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 380px;
+            height: 520px;
+            background: #161b26;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.7);
+            z-index: 1050;
+            flex-direction: column;
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.12);
+        }
+
+        @@media (max-width: 768px) {
+            .hero { min-height: auto; padding: 60px 6%; }
+            .hero h1 { font-size: 42px; }
+            .hero-visual { display: none; }
+            #homeAiChatWindow {
+                width: calc(100% - 30px);
+                right: 15px;
+                bottom: 15px;
+                height: 480px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="home-page">
+
+    <!-- ================= NAVBAR ================= -->
+    <header class="landing-header">
+        <a asp-controller="Home" asp-action="Index" class="brand-logo">
+            <div class="brand-logo-icon">
+                <i class="bi bi-box-seam"></i>
+            </div>
+            <span>STOCKORA</span>
+        </a>
+
+        <div class="header-actions">
+            @if (isLoggedIn)
+            {
+                <a asp-controller="Home" asp-action="Dashboard" class="btn-nav-signup">
+                    <i class="bi bi-grid-1x2-fill"></i> Go to Dashboard
+                </a>
+            }
+            else
+            {
+                <a asp-controller="Account" asp-action="Login" class="btn-nav-login">
+                    <i class="bi bi-box-arrow-in-right me-1"></i> Sign In
+                </a>
+                <a asp-controller="Account" asp-action="Register" class="btn-nav-signup">
+                    <i class="bi bi-person-plus-fill"></i> Get Started
+                </a>
+            }
+        </div>
+    </header>
+
+    <!-- ================= HERO ================= -->
+    <section class="hero">
+        <div class="hero-content">
+            <div class="hero-badge">
+                <span></span>
+                Next-Gen Inventory Control
+            </div>
+
+            <h1>
+                Manage Your
+                <span class="highlight">Inventory</span>
+                Smarter.
+            </h1>
+
+            <p class="hero-description">
+                Stockora gives your team full real-time visibility over products, suppliers, purchases, sales, and low-stock threshold alerts with built-in AI Copilot.
+            </p>
+
+            <div class="hero-buttons">
+                @if (isLoggedIn)
+                {
+                    <a asp-controller="Home" asp-action="Dashboard" class="btn-main">
+                        <i class="bi bi-grid-1x2-fill me-2"></i>
+                        Open Dashboard
+                    </a>
+                    <a asp-controller="Products" asp-action="Index" class="btn-outline-custom">
+                        Explore Products
+                        <i class="bi bi-arrow-right ms-2"></i>
+                    </a>
+                }
+                else
+                {
+                    <a asp-controller="Account" asp-action="Login" class="btn-main">
+                        <i class="bi bi-box-arrow-in-right me-2"></i>
+                        Sign In to Access
+                    </a>
+                    <a asp-controller="Account" asp-action="Register" class="btn-outline-custom">
+                        Create Account
+                        <i class="bi bi-arrow-right ms-2"></i>
+                    </a>
+                }
+            </div>
+        </div>
+
+        <div class="hero-visual">
+            <div class="glow-circle"></div>
+
+            <div class="inventory-card">
+                <div class="card-header-custom">
+                    <div class="mini-logo">
+                        <div class="mini-logo-icon">
+                            <i class="bi bi-box-seam"></i>
+                        </div>
+                        STOCKORA
+                    </div>
+
+                    <div class="status">
+                        <i class="bi bi-circle-fill me-1" style="font-size:6px;"></i>
+                        System Live
+                    </div>
+                </div>
+
+                <div class="stock-number">8,420</div>
+                <div class="stock-label">Total Inventory Items</div>
+
+                <div class="progress-custom">
+                    <div></div>
+                </div>
+
+                <div class="d-flex justify-content-between mt-3">
+                    <small class="text-secondary">Inventory Health</small>
+                    <small style="color:#10b981; font-weight:600;">Optimal (76%)</small>
+                </div>
+            </div>
+
+            <div class="floating-box one">
+                <span class="floating-icon">
+                    <i class="bi bi-graph-up-arrow"></i>
+                </span>
+                <span>
+                    <strong style="color:#ffffff;">+24.8%</strong><br>
+                    <small class="text-secondary">Sales Growth</small>
+                </span>
+            </div>
+
+            <div class="floating-box two">
+                <span class="floating-icon" style="background:rgba(99,102,241,0.15); color:#818cf8;">
+                    <i class="bi bi-box-seam"></i>
+                </span>
+                <span>
+                    <strong style="color:#ffffff;">1,248</strong><br>
+                    <small class="text-secondary">In Stock</small>
+                </span>
+            </div>
+        </div>
+    </section>
+
+    <!-- ================= STATS ================= -->
+    <section class="stats-section">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-6 col-md-3">
+                    <div class="stat-box">
+                        <div class="stat-number">1K+</div>
+                        <div class="stat-label">Products Tracked</div>
+                    </div>
+                </div>
+
+                <div class="col-6 col-md-3">
+                    <div class="stat-box">
+                        <div class="stat-number">50+</div>
+                        <div class="stat-label">Trusted Suppliers</div>
+                    </div>
+                </div>
+
+                <div class="col-6 col-md-3">
+                    <div class="stat-box">
+                        <div class="stat-number">10K+</div>
+                        <div class="stat-label">Completed Transactions</div>
+                    </div>
+                </div>
+
+                <div class="col-6 col-md-3">
+                    <div class="stat-box">
+                        <div class="stat-number">24/7</div>
+                        <div class="stat-label">AI Stock Assistant</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ================= FEATURES ================= -->
+    <section class="features-section">
+        <div class="section-title">
+            <div class="small-title">Stockora Platform</div>
+            <h2>Everything You Need</h2>
+            <p>One unified system to keep your stock, sales pipelines, and procurement organized.</p>
+        </div>
+
+        <div class="container-fluid">
+            <div class="row g-4">
+                
+                <!-- 1. Product Management (تتطلب تسجيل دخول) -->
+                <div class="col-md-6 col-lg-4">
+                    <a href="@(isLoggedIn ? Url.Action("Index", "Products") : Url.Action("Login", "Account"))" 
+                       class="feature-card">
+                        @if (!isLoggedIn)
+                        {
+                            <span class="lock-badge"><i class="bi bi-lock-fill"></i> Sign in</span>
+                        }
+                        <div class="feature-icon icon-products"><i class="bi bi-box-seam"></i></div>
+                        <h4>Product Management</h4>
+                        <p>Easily catalog, categorize, update, and search inventory items with dynamic thresholds.</p>
+                    </a>
+                </div>
+
+                <!-- 2. Supplier Management (تتطلب تسجيل دخول) -->
+                <div class="col-md-6 col-lg-4">
+                    <a href="@(isLoggedIn ? Url.Action("Index", "Suppliers") : Url.Action("Login", "Account"))" 
+                       class="feature-card">
+                        @if (!isLoggedIn)
+                        {
+                            <span class="lock-badge"><i class="bi bi-lock-fill"></i> Sign in</span>
+                        }
+                        <div class="feature-icon icon-suppliers"><i class="bi bi-truck"></i></div>
+                        <h4>Supplier Management</h4>
+                        <p>Maintain verified supplier profiles, contact records, and active vendor catalogs.</p>
+                    </a>
+                </div>
+
+                <!-- 3. Purchases & Orders (تتطلب تسجيل دخول) -->
+                <div class="col-md-6 col-lg-4">
+                    <a href="@(isLoggedIn ? Url.Action("Index", "Purchases") : Url.Action("Login", "Account"))" 
+                       class="feature-card">
+                        @if (!isLoggedIn)
+                        {
+                            <span class="lock-badge"><i class="bi bi-lock-fill"></i> Sign in</span>
+                        }
+                        <div class="feature-icon icon-purchases"><i class="bi bi-cart-plus"></i></div>
+                        <h4>Purchases & Orders</h4>
+                        <p>Log inbound supplier deliveries and automatically restock unit quantities.</p>
+                    </a>
+                </div>
+
+                <!-- 4. Sales Management (تتطلب تسجيل دخول) -->
+                <div class="col-md-6 col-lg-4">
+                    <a href="@(isLoggedIn ? Url.Action("Index", "Sales") : Url.Action("Login", "Account"))" 
+                       class="feature-card">
+                        @if (!isLoggedIn)
+                        {
+                            <span class="lock-badge"><i class="bi bi-lock-fill"></i> Sign in</span>
+                        }
+                        <div class="feature-icon icon-sales"><i class="bi bi-cart-check"></i></div>
+                        <h4>Sales Management</h4>
+                        <p>Process order receipts, deduce stock automatically, and monitor total revenue.</p>
+                    </a>
+                </div>
+
+                <!-- 5. Stock Alerts (تتطلب تسجيل دخول) -->
+                <div class="col-md-6 col-lg-4">
+                    <a href="@(isLoggedIn ? Url.Action("Reports", "Home") : Url.Action("Login", "Account"))" 
+                       class="feature-card">
+                        @if (!isLoggedIn)
+                        {
+                            <span class="lock-badge"><i class="bi bi-lock-fill"></i> Sign in</span>
+                        }
+                        <div class="feature-icon icon-stock"><i class="bi bi-bar-chart-line"></i></div>
+                        <h4>Stock Alerts</h4>
+                        <p>Instant automated flagging for depleted items running below safe threshold limits.</p>
+                    </a>
+                </div>
+
+                <!-- 6. AI Copilot (الوحيد الذي يعمل دائماً بدون تسجيل دخول) -->
+                <div class="col-md-6 col-lg-4">
+                    <div class="feature-card" onclick="openHomeAIChat()" style="cursor: pointer; border-color: rgba(99, 102, 241, 0.4);">
+                        <span class="lock-badge text-info border-info border-opacity-25" style="background: rgba(99, 102, 241, 0.15);">
+                            <i class="bi bi-unlock-fill"></i> Free Access
+                        </span>
+                        <div class="feature-icon icon-ai"><i class="bi bi-robot"></i></div>
+                        <h4>AI Copilot</h4>
+                        <p>Natural conversational intelligence to answer queries about stock numbers in real-time.</p>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- ================= CTA ================= -->
+    <section class="cta-section">
+        <div class="cta-box">
+            <h2>Ready to Take Control?</h2>
+            <p>Launch your dashboard and manage operations with real-time accuracy.</p>
+            <a href="@(isLoggedIn ? Url.Action("Dashboard", "Home") : Url.Action("Register", "Account"))" 
+               class="btn-main">
+                @(isLoggedIn ? "Open Dashboard" : "Get Started Now")
+                <i class="bi bi-arrow-right ms-2"></i>
+            </a>
+        </div>
+    </section>
+
+</div>
+
+<!-- نافذة الشات الذكي المنبثقة -->
+<div id="homeAiChatWindow">
+    <div style="background: #1f2738; padding: 14px 18px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.08);">
+        <div style="display: flex; align-items: center; gap: 10px;">
+            <span style="font-size: 24px;">🤖</span>
+            <div>
+                <div style="font-weight: 700; color: #fff; font-size: 14px;">Stockora AI Assistant</div>
+                <div style="font-size: 11px; color: #10b981;">Online & Ready to Help</div>
+            </div>
+        </div>
+        <button onclick="closeHomeAIChat()" style="background: none; border: none; color: #94a3b8; font-size: 24px; cursor: pointer; line-height: 1;">&times;</button>
+    </div>
+
+    <div id="homeChatBox" style="flex: 1; padding: 16px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; background: #0f131d;">
+        <div style="background: #1f2738; color: #e2e8f0; padding: 10px 14px; border-radius: 14px; border-top-left-radius: 2px; align-self: flex-start; max-width: 85%; font-size: 13px; line-height: 1.5;">
+            مرحباً بك! 👋 أنا مساعد Stockora الذكي. يمكنك سؤالي عن أي شيء يخص النظام أو إدارة المخزون فوراً!
+        </div>
+    </div>
+
+    <div style="padding: 12px; background: #1f2738; display: flex; gap: 8px; border-top: 1px solid rgba(255,255,255,0.08);">
+        <input type="text" id="homeUserInput" placeholder="Ask AI anything..." 
+               style="flex: 1; background: #0f131d; border: 1px solid #2b3245; color: #fff; padding: 10px 14px; border-radius: 12px; outline: none; font-size: 13.5px;" />
+        <button id="btnHomeSend" onclick="sendHomeAiMessage()"
+                style="background: linear-gradient(135deg, #4f46e5, #6366f1); color: white; border: none; padding: 10px 18px; border-radius: 12px; font-weight: 600; font-size: 13px; cursor: pointer;">
+            Send
+        </button>
+    </div>
+</div>
+
+<script>
+    function openHomeAIChat() {
+        const chatWin = document.getElementById("homeAiChatWindow");
+        chatWin.style.display = "flex";
+        document.getElementById("homeUserInput").focus();
+    }
+
+    function closeHomeAIChat() {
+        document.getElementById("homeAiChatWindow").style.display = "none";
+    }
+
+    async function sendHomeAiMessage() {
+        let input = document.getElementById("homeUserInput");
+        let message = input.value.trim();
+        if (!message) return;
+
+        let chatBox = document.getElementById("homeChatBox");
+
+        chatBox.innerHTML += `
+            <div style="background: linear-gradient(135deg, #4f46e5, #6366f1); color: white; padding: 10px 14px; border-radius: 14px; border-top-right-radius: 2px; align-self: flex-end; max-width: 85%; font-size: 13px; word-break: break-word;">
+                ${message}
+            </div>`;
+        input.value = "";
+        chatBox.scrollTop = chatBox.scrollHeight;
+
+        let loadingId = "loading_" + Date.now();
+        chatBox.innerHTML += `
+            <div id="${loadingId}" style="background: #1f2738; color: #94a3b8; padding: 8px 12px; border-radius: 12px; align-self: flex-start; font-size: 12px;">
+                Thinking...
+            </div>`;
+        chatBox.scrollTop = chatBox.scrollHeight;
+
+        try {
+            let response = await fetch('/Home/AskAiAssistant', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(message)
+            });
+
+            document.getElementById(loadingId)?.remove();
+
+            if (response.ok) {
+                let data = await response.json();
+                chatBox.innerHTML += `
+                    <div style="background: #1f2738; color: #e2e8f0; padding: 10px 14px; border-radius: 14px; border-top-left-radius: 2px; align-self: flex-start; max-width: 85%; font-size: 13px; line-height: 1.5; white-space: pre-line;">
+                        ${data.reply}
+                    </div>`;
+            } else {
+                chatBox.innerHTML += `<div style="color: #ef4444; font-size: 12px; padding: 4px;">⚠️ Error communicating with assistant.</div>`;
+            }
+        } catch (err) {
+            document.getElementById(loadingId)?.remove();
+            chatBox.innerHTML += `<div style="color: #ef4444; font-size: 12px; padding: 4px;">⚠️ Network error.</div>`;
+        }
+
+        chatBox.scrollTop = chatBox.scrollHeight;
+    }
+
+    document.getElementById("homeUserInput").addEventListener("keypress", function (e) {
+        if (e.key === "Enter") sendHomeAiMessage();
+    });
+</script>
+
+</body>
+</html>

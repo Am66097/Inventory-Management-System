@@ -1,0 +1,90 @@
+﻿@model WebApplication1.Models.Sale
+
+@{
+    ViewData["Title"] = "Create Sales Invoice";
+}
+
+<h2>Create Sales Invoice</h2>
+<hr />
+
+<div class="row">
+    <div class="col-md-10">
+        <form asp-action="Create" method="post">
+            <div asp-validation-summary="All" class="text-danger"></div>
+
+            <div class="form-group mb-3">
+                <label asp-for="CustomerInfo" class="control-label"></label>
+                <input asp-for="CustomerInfo" class="form-group form-control" placeholder="Enter customer name or phone..." />
+                <span asp-validation-for="CustomerInfo" class="text-danger"></span>
+            </div>
+
+            <h4>Sale Items</h4>
+            <table class="table table-bordered" id="itemsTable">
+                <thead>
+                    <tr>
+                        <th>Product</th>
+                        <th>Quantity</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>
+                            <select name="items[0].ProductID" class="form-control" asp-items="ViewBag.Products" required>
+                                <option value="">-- Select Product --</option>
+                            </select>
+                        </td>
+                        <td>
+                            <input type="number" name="items[0].Quantity" class="form-control" min="1" value="1" required />
+                        </td>
+                        <td>
+                            <button type="button" class="btn btn-danger remove-row">Remove</button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <button type="button" id="addRow" class="btn btn-secondary mb-3">+ Add Another Product</button>
+            <br />
+
+            <div class="form-group">
+                <input type="submit" value="Save Invoice" class="btn btn-primary" />
+                <a asp-action="Index" class="btn btn-outline-secondary">Back to List</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        let itemIndex = 1;
+
+        document.getElementById('addRow').addEventListener('click', function () {
+            let table = document.getElementById('itemsTable').getElementsByTagName('tbody')[0];
+            let newRow = table.rows[0].cloneNode(true);
+
+            // Update input/select names for correct model binding
+            let select = newRow.querySelector('select');
+            select.name = `items[${itemIndex}].ProductID`;
+            select.value = '';
+
+            let input = newRow.querySelector('input[type="number"]');
+            input.name = `items[${itemIndex}].Quantity`;
+            input.value = '1';
+
+            table.appendChild(newRow);
+            itemIndex++;
+        });
+
+        document.getElementById('itemsTable').addEventListener('click', function (e) {
+            if (e.target && e.target.classList.contains('remove-row')) {
+                let tbody = document.getElementById('itemsTable').getElementsByTagName('tbody')[0];
+                if (tbody.rows.length > 1) {
+                    e.target.closest('tr').remove();
+                } else {
+                    alert('Invoice must contain at least one item.');
+                }
+            }
+        });
+    </script>
+}
