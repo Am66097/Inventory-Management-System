@@ -1,0 +1,36 @@
+﻿@model WebApplication1.Models.SupplierProduct
+
+@{
+    ViewData["Title"] = "Supplier Contract Details";
+}
+
+<h2 class="mb-4">Supplier Contract Details</h2>
+<hr />
+
+<div>
+    <dl class="row">
+        <dt class="col-sm-3 text-muted">Contract ID</dt>
+        <dd class="col-sm-9">@Model.SupplierProductID</dd>
+
+        <dt class="col-sm-3 text-muted">Supplier Name</dt>
+        <dd class="col-sm-9">@(Model.Supplier?.SupplierName ?? "N/A")</dd>
+
+        <dt class="col-sm-3 text-muted">Product Name</dt>
+        <!-- إذا كان اسم الخاصية عندك Name بدلاً من ProductName، قم بتعديلها هنا -->
+        <dd class="col-sm-9">@(Model.Product?.ProductName ?? "N/A")</dd>
+
+        <dt class="col-sm-3 text-muted">Supplier SKU</dt>
+        <dd class="col-sm-9">@(string.IsNullOrEmpty(Model.SupplierSKU) ? "N/A" : Model.SupplierSKU)</dd>
+
+        <dt class="col-sm-3 text-muted">Contract Price</dt>
+        <dd class="col-sm-9">@Model.ContractPrice.ToString("C")</dd>
+
+        <dt class="col-sm-3 text-muted">Lead Time (Days)</dt>
+        <dd class="col-sm-9">@Model.LeadTimeDays Days</dd>
+    </dl>
+</div>
+
+<div class="mt-4">
+    <a asp-action="Edit" asp-route-id="@Model.SupplierProductID" class="btn btn-warning">Edit</a>
+    <a asp-action="Index" class="btn btn-secondary">Back to List</a>
+</div>

@@ -1,0 +1,37 @@
+﻿@model WebApplication1.Models.Product
+
+@{
+    ViewData["Title"] = "Product Details";
+}
+
+<h2>Product Details</h2>
+<hr />
+
+<div class="card shadow-sm col-md-8">
+    <div class="card-body">
+        <dl class="row mb-0">
+            <dt class="col-sm-4">Product ID</dt>
+            <dd class="col-sm-8">@Model.ProductID</dd>
+
+            <dt class="col-sm-4">Product Name</dt>
+            <dd class="col-sm-8">@Model.Name</dd>
+
+            <dt class="col-sm-4">Description</dt>
+            <dd class="col-sm-8">@(string.IsNullOrEmpty(Model.Description) ? "N/A" : Model.Description)</dd>
+
+            <dt class="col-sm-4">Price</dt>
+            <dd class="col-sm-8">@Model.Price.ToString("C")</dd>
+
+            <dt class="col-sm-4">Stock Quantity</dt>
+            <dd class="col-sm-8">@Model.StockQuantity</dd>
+
+            <dt class="col-sm-4">Category</dt>
+            <dd class="col-sm-8">@Model.Category?.Name</dd>
+        </dl>
+    </div>
+</div>
+
+<div class="mt-4">
+    <a asp-action="Edit" asp-route-id="@Model.ProductID" class="btn btn-warning"><i class="bi bi-pencil"></i> Edit</a>
+    <a asp-action="Index" class="btn btn-secondary"><i class="bi bi-arrow-left"></i> Back to List</a>
+</div>
