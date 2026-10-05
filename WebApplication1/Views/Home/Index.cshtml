@@ -1,0 +1,79 @@
+﻿@model WebApplication1.Models.DashboardViewModel
+@{
+    ViewData["Title"] = "Dashboard";
+}
+
+<h1 class="mb-4">Inventory Dashboard</h1>
+
+<!-- 1. كروت الإحصائيات (KPIs) -->
+<div class="row mb-5">
+    <div class="col-md-3">
+        <div class="card text-white bg-primary mb-3 shadow-sm">
+            <div class="card-body text-center">
+                <h5 class="card-title">Total Products</h5>
+                <h2 class="card-text">@Model.TotalProducts</h2>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-white bg-success mb-3 shadow-sm">
+            <div class="card-body text-center">
+                <h5 class="card-title">Total Sales</h5>
+                <h2 class="card-text">$@Model.TotalSalesRevenue</h2>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-white bg-danger mb-3 shadow-sm">
+            <div class="card-body text-center">
+                <h5 class="card-title">Total Purchases</h5>
+                <h2 class="card-text">$@Model.TotalPurchasesCost</h2>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-dark bg-warning mb-3 shadow-sm">
+            <div class="card-body text-center">
+                <h5 class="card-title">Total Suppliers</h5>
+                <h2 class="card-text">@Model.TotalSuppliers</h2>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <!-- 2. جدول تنبيهات النواقص (تم تعديله ليأخذ العرض بالكامل col-md-12) -->
+    <div class="col-md-12">
+        <h4 class="text-danger mb-3">⚠️ Low-Stock Alerts</h4>
+        <div class="table-responsive">
+            <table class="table table-bordered table-striped shadow-sm">
+                <thead class="table-dark">
+                    <tr>
+                        <th>Product Name</th>
+                        <th>Current Stock</th>
+                        <th>Threshold</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model.LowStockProducts.Any())
+                    {
+                        foreach (var item in Model.LowStockProducts)
+                        {
+                            <tr>
+                                <td>@item.ProductName</td>
+                                <td class="text-danger fw-bold">@item.StockQuantity</td>
+                                <td>@item.LowStockThreshold</td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="3" class="text-center text-success fw-bold">All products are well stocked!</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
