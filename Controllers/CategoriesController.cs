@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using WebApplication1.Data;
 using WebApplication1.Models;
 
@@ -90,19 +91,28 @@ namespace WebApplication1.Controllers
             return View(category);
         }
 
-        // POST: /Categories/Delete/5
+        // POST: Categories/Delete/5
         [HttpPost, ActionName("Delete")]
-        public IActionResult DeleteConfirmed(int id)
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var category = _context.Categories.Find(id);
-            if (category == null)
-            {
-                return NotFound();
-            }
-            _context.Categories.Remove(category);
-            _context.SaveChanges();
-            return RedirectToAction(nameof(Index));
+            bool hasProducts = await _context.Products.AnyAsync(p => p.CategoryID == id);
 
+            if (hasProducts)
+            {
+                TempData["ErrorMessage"] = "Cannot delete this category because it contains active products. Please reassign or delete the products first.";
+                return RedirectToAction(nameof(Index));
+            }
+
+            var category = await _context.Categories.FindAsync(id);
+            if (category != null)
+            {
+                _context.Categories.Remove(category);
+                await _context.SaveChangesAsync();
+                TempData["SuccessMessage"] = "Category deleted successfully.";
+            }
+
+            return RedirectToAction(nameof(Index));
         }
 
 

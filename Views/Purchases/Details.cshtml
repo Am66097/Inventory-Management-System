@@ -42,7 +42,7 @@
             foreach (var item in Model.PurchaseItems)
             {
                 <tr>
-                    <td>@(item.Product?.Name ?? $"Product #{item.ProductID}")</td>
+                    <td>@(item.Product?.ProductName ?? $"Product #{item.ProductID}")</td>
                     <td>@item.Quantity</td>
                     <td>@item.UnitCost.ToString("C")</td>
                     <td>@((item.Quantity * item.UnitCost).ToString("C"))</td>
