@@ -41,7 +41,7 @@ namespace WebApplication1.Controllers
             if (!string.IsNullOrWhiteSpace(searchString))
             {
                 query = query.Where(p =>
-                    p.Name.Contains(searchString) ||
+                    p.ProductName.Contains(searchString) ||
                     p.Description.Contains(searchString));
             }
 

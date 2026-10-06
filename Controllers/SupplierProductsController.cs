@@ -30,7 +30,7 @@ namespace WebApplication1.Controllers
             {
                 supplierProducts = supplierProducts.Where(s =>
                     s.Supplier.SupplierName.Contains(searchString) ||
-                    s.Product.Name.Contains(searchString) ||
+                    s.Product.ProductName.Contains(searchString) ||
                     s.SupplierSKU.Contains(searchString));
             }
 
