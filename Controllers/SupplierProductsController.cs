@@ -91,28 +91,21 @@ namespace WebApplication1.Controllers
             }
 
             var supplierProduct = await _context.SupplierProducts
-                .FindAsync(id);
+                .Include(sp => sp.Product)
+                .Include(sp => sp.Supplier)
+                .FirstOrDefaultAsync(m => m.SupplierProductID == id); // تأكد من اسم الـ Primary Key (SupplierProductID أو Id)
 
             if (supplierProduct == null)
             {
                 return NotFound();
             }
 
-            ViewData["SupplierID"] = new SelectList(
-                _context.Suppliers,
-                "SupplierId",
-                "SupplierName",
-                supplierProduct.SupplierID);
-
-            ViewData["ProductID"] = new SelectList(
-                _context.Products,
-                "ProductID",
-                "Name",
-                supplierProduct.ProductID);
+            // ربط القوائم المنسدلة بالأسماء الصحيحة بعد التعديل
+            ViewData["ProductID"] = new SelectList(_context.Products, "ProductID", "ProductName", supplierProduct.ProductID);
+            ViewData["SupplierID"] = new SelectList(_context.Suppliers, "SupplierId", "SupplierName", supplierProduct.SupplierID);
 
             return View(supplierProduct);
         }
-
 
         // POST: SupplierProducts/Edit/5
         [HttpPost]
