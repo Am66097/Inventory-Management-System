@@ -41,17 +41,14 @@ namespace WebApplication1.Controllers
         // GET: SupplierProducts/Create
         public IActionResult Create()
         {
-            ViewData["SupplierID"] = new SelectList(
-                _context.Suppliers,
-                "SupplierId",
-                "SupplierName");
+            // 1. استخدام ProductName المتطابق مع الموديل الجديد
+            ViewData["ProductID"] = new SelectList(_context.Products, "ProductID", "ProductName");
 
-            ViewData["ProductID"] = new SelectList(
-                _context.Products,
-                "ProductID",
-                "Name");
+            // 2. التأكد من اسم حقل المورد (تأكد هل هو SupplierName أم Name في كلاس Supplier)
+            ViewData["SupplierID"] = new SelectList(_context.Suppliers, "SupplierId", "SupplierName");
 
-            return View();
+            // 3. تمرير كائن جديد فارغ لحماية الفيو من أي قراءة للـ Model وهو null
+            return View(new SupplierProduct());
         }
 
 
